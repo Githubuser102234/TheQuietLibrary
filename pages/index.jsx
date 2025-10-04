@@ -1,5 +1,8 @@
 import React from 'react';
 
+// --- IMPORTANT FIX: Use Next.js Link for client-side routing ---
+import Link from 'next/link'; 
+
 // --- Simulated Data (Mocks a Database/API) ---
 const items = [
     { id: 101, slug: 'mars-rover-curiosity', name: 'Mars Rover Curiosity', description: 'Exploring Gale Crater since 2012, searching for signs of ancient microbial life.', category: 'Space' },
@@ -20,7 +23,7 @@ export async function getStaticProps() {
 const HomePage = ({ items }) => {
     return (
         <div className="p-6 md:p-12 bg-gray-900 min-h-screen">
-            <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+            <script src="https://cdn.tailwindcss.com"></script>
             <div className="max-w-4xl mx-auto">
                 <header className="text-center py-8">
                     <h1 className="text-5xl font-extrabold text-white">
@@ -37,21 +40,23 @@ const HomePage = ({ items }) => {
                             key={item.id} 
                             className="bg-gray-800 rounded-xl shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 overflow-hidden border border-indigo-700"
                         >
-                            {/* Link to the dynamic page /item/[slug] */}
-                            <a href={`/item/${item.slug}`} className="block p-5 h-full">
-                                <h2 className="text-2xl font-semibold text-white mb-2 truncate">
-                                    {item.name}
-                                </h2>
-                                <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-700 text-indigo-400 mb-3">
-                                    {item.category}
-                                </span>
-                                <p className="text-gray-400 text-sm line-clamp-3">
-                                    {item.description}
-                                </p>
-                                <p className="mt-4 text-indigo-400 hover:text-indigo-300 text-sm font-bold transition">
-                                    View Details &rarr;
-                                </p>
-                            </a>
+                            {/* FIX: Use <Link> instead of <a> */}
+                            <Link href={`/item/${item.slug}`} passHref legacyBehavior>
+                                <a className="block p-5 h-full">
+                                    <h2 className="text-2xl font-semibold text-white mb-2 truncate">
+                                        {item.name}
+                                    </h2>
+                                    <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-700 text-indigo-400 mb-3">
+                                        {item.category}
+                                    </span>
+                                    <p className="text-gray-400 text-sm line-clamp-3">
+                                        {item.description}
+                                    </p>
+                                    <p className="mt-4 text-indigo-400 hover:text-indigo-300 text-sm font-bold transition">
+                                        View Details &rarr;
+                                    </p>
+                                </a>
+                            </Link>
                         </div>
                     ))}
                 </div>
