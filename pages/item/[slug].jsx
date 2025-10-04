@@ -1,5 +1,8 @@
 import React from 'react';
 
+// --- IMPORTANT FIX: Use Next.js Link for client-side routing ---
+import Link from 'next/link'; 
+
 // --- Simulated Data (Mocks a Database/API) ---
 const items = [
     { id: 101, slug: 'mars-rover-curiosity', name: 'Mars Rover Curiosity', description: 'Exploring Gale Crater since 2012, searching for signs of ancient microbial life.', category: 'Space' },
@@ -10,7 +13,6 @@ const items = [
 
 // Next.js function to generate the paths for pre-rendering pages (runs at build time)
 export async function getStaticPaths() {
-    // Generate paths for every item slug: /item/mars-rover-curiosity, etc.
     const paths = items.map(item => ({
         params: { slug: item.slug },
     }));
@@ -42,12 +44,15 @@ export async function getStaticProps(context) {
 const ItemDetailPage = ({ item }) => {
     return (
         <div className="p-6 md:p-12 bg-gray-50 min-h-screen">
-            <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+            <script src="https://cdn.tailwindcss.com"></script>
             <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-xl p-8 border border-gray-100">
-                <a href="/" className="text-indigo-600 hover:text-indigo-800 transition duration-150 flex items-center mb-6 font-medium">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                    Back to All Items
-                </a>
+                {/* FIX: Use <Link> instead of <a> for back button */}
+                <Link href="/" passHref legacyBehavior>
+                    <a className="text-indigo-600 hover:text-indigo-800 transition duration-150 flex items-center mb-6 font-medium">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        Back to All Items
+                    </a>
+                </Link>
                 
                 <h1 className="text-4xl font-extrabold text-gray-900 border-b pb-4 mb-4">
                     {item.name}
@@ -71,16 +76,4 @@ const ItemDetailPage = ({ item }) => {
 };
 
 export default ItemDetailPage;
-
-Final Steps to Deploy
- * Delete/Rename Old Files: Ensure you delete any old versions of the code you were using (like the complex combined pages/index.jsx or any pages/post/[slug].jsx from previous attempts).
- * Create Folders: Make sure your file structure looks exactly like this:
-   / (Root Directory)
-├── package.json
-├── pages/
-│   ├── index.jsx          <-- Content from File 1
-│   └── item/
-│       └── [slug].jsx     <-- Content from File 2
-
-
 
