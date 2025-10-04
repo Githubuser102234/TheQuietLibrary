@@ -1,6 +1,4 @@
 import React from 'react';
-// Note: We use the 'Link' component from next/link internally, 
-// but since this is a single, isolated file environment, we use <a> tags for navigation simulation.
 
 // --- 1. Simulated Data (Mocks a Database/API) ---
 
@@ -12,14 +10,16 @@ const items = [
 
 // --- 2. Next.js Data Fetching Logic (Runs at Build Time) ---
 
-// getStaticPaths is required for the dynamic route [id] to know which pages to build.
+/**
+ * Next.js function to generate the paths for pre-rendering pages.
+ * This function handles the dynamic route /item/[slug]
+ */
 export async function getStaticPaths() {
-    // We only want to generate paths for the detail page component, which is located in this same file.
-    // We are generating paths for the pattern: /item/[slug]
-
     // Create the paths array for dynamic pages: /item/mars-rover-curiosity, /item/golden-gate-bridge, etc.
     const paths = items.map(item => ({
-        params: { id: item.slug },
+        // Note: The parameter name must match the component's expected dynamic segment, 
+        // which in this combined file is 'id' since it's simulating the [id].jsx file.
+        params: { id: item.slug }, 
     }));
 
     return {
@@ -28,9 +28,11 @@ export async function getStaticPaths() {
     };
 }
 
-// getStaticProps fetches the necessary data for either the Home or Detail page
+/**
+ * Next.js function to fetch data for either the Home or Detail page
+ */
 export async function getStaticProps(context) {
-    // If context.params exists, we are on a detail page (e.g., /item/mars-rover-curiosity)
+    // Check if context.params exists, which means we are building a DETAIL PAGE (e.g., /item/[slug])
     if (context.params?.id) {
         const slug = context.params.id;
         const item = items.find(i => i.slug === slug);
@@ -44,7 +46,7 @@ export async function getStaticProps(context) {
         };
     }
 
-    // If no context.params, we are on the Home page (/)
+    // If no context.params, we are building the HOME PAGE (/)
     return { 
         props: { pageType: 'home', items } 
     };
@@ -53,11 +55,12 @@ export async function getStaticProps(context) {
 // --- 3. React Components (The UI) ---
 
 /**
- * Renders the Detail Page for a specific item (Route: /item/[slug])
+ * Renders the Detail Page for a specific item (Route: /item/[slug] logic)
  */
 const ItemDetailPage = ({ item }) => {
     return (
         <div className="p-6 md:p-12 bg-gray-50 min-h-screen">
+            <script src="https://cdn.tailwindcss.com"></script>
             <div className="max-w-3xl mx-auto bg-white shadow-xl rounded-xl p-8 border border-gray-100">
                 <a href="/" className="text-indigo-600 hover:text-indigo-800 transition duration-150 flex items-center mb-6 font-medium">
                     <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
@@ -92,7 +95,6 @@ const ItemDetailPage = ({ item }) => {
 const HomePage = ({ items }) => {
     return (
         <div className="p-6 md:p-12 bg-gray-900 min-h-screen">
-            <script src="https://cdn.tailwindcss.com"></script>
             <div className="max-w-4xl mx-auto">
                 <header className="text-center py-8">
                     <h1 className="text-5xl font-extrabold text-white">
@@ -109,7 +111,7 @@ const HomePage = ({ items }) => {
                             key={item.id} 
                             className="bg-gray-800 rounded-xl shadow-xl hover:shadow-2xl transition duration-300 transform hover:-translate-y-1 overflow-hidden border border-indigo-700"
                         >
-                            {/* In a real Next.js app, you would use <Link href={`/item/${item.slug}`}> */}
+                            {/* Simulation of Next.js Link: navigates to the clean path */}
                             <a href={`/item/${item.slug}`} className="block p-5 h-full">
                                 <h2 className="text-2xl font-semibold text-white mb-2 truncate">
                                     {item.name}
@@ -147,20 +149,5 @@ const App = (props) => {
     return <HomePage items={props.items} />;
 };
 
-// Next.js uses the component's name to determine which paths to handle.
-// Since this file is at pages/index.jsx, it handles the root path and acts as a router.
-
-// To enable this file to also handle the dynamic route /item/[slug], 
-// we must export the special functions from *this* file, even though the paths 
-// logically belong to a file named pages/item/[slug].jsx.
-// NOTE: For a real project, you would usually split this into two files:
-// 1. pages/index.jsx (for the HomePage)
-// 2. pages/item/[slug].jsx (for the ItemDetailPage and its getStaticPaths/getStaticProps)
-// We combine them here for the single-file requirement.
-
 export default App;
-
-// We export getStaticPaths/getStaticProps again here for Vercel/Next.js to use them
-// when simulating the structure in this single file.
-export { getStaticPaths, getStaticProps };
 
