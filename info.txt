@@ -1,3 +1,0 @@
-First Project - Click Counter
-
-This is to build a feature packed, fancy click counter. It is currently not finished, but has a lot in it.
